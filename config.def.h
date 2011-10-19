@@ -1,7 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
 /* font */
-static const char font[]                = "*-*-envy code r-*-*-*-*-13-*-*-*-*-*-*-*";
+static const char font[]                = "Droid Sans Mono 10";
 
 /* border colors */
 static const char border_color[]        = "#333333";
