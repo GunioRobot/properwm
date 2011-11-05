@@ -426,7 +426,9 @@ arrange(Monitor *m) {
         showhide(m->stack);
     else for (m = mons; m; m = m->next)
         showhide(m->stack);
+
     focus(NULL);
+
     if (m)
         arrangemon(m);
     else for (m = mons; m; m = m->next)
@@ -435,9 +437,18 @@ arrange(Monitor *m) {
 
 void
 arrangemon(Monitor *m) {
+    Client* c;
+    int nc;
+
     strncpy(m->ltsymbol, m->lt[m->sellt]->symbol, sizeof m->ltsymbol);
-    if (m->lt[m->sellt]->arrange)
+
+    if (m->lt[m->sellt]->arrange) {
+        for (nc = 0, c = nexttiled(m->clients); c; nc++, c = nexttiled(c->next));
+        if (nc > 1 && m->nmasters[m->curtag] >= nc)
+            m->nmasters[m->curtag] = nc-1;
         m->lt[m->sellt]->arrange(m);
+    }
+
     restack(m);
 }
 
@@ -462,17 +473,20 @@ buttonpress(XEvent *e) {
     XButtonPressedEvent *ev = &e->xbutton;
 
     click = ClickRootWin;
+
     /* focus monitor if necessary */
     if ((m = wintomon(ev->window)) && m != selmon) {
         unfocus(selmon->sel, True);
         selmon = m;
         focus(NULL);
     }
+
     if (ev->window == selmon->barwin) {
         i = x = 0;
         do {
             x += TEXTW(tags[i]);
-        } while(ev->x >= x && ++i < LENGTH(tags));
+        } while (ev->x >= x && ++i < LENGTH(tags));
+        
         if (i < LENGTH(tags)) {
             click = ClickTagStrip;
             arg.ui = 1 << i;
@@ -488,6 +502,7 @@ buttonpress(XEvent *e) {
         focus(c);
         click = ClickClient;
     }
+
     for (i = 0; i < LENGTH(buttons); i++)
         if (click == buttons[i].click && buttons[i].func && buttons[i].button == ev->button
         && CLEANMASK(buttons[i].mask) == CLEANMASK(ev->state))
@@ -498,6 +513,7 @@ void
 checkotherwm(void) {
     otherwm = False;
     xerrorxlib = XSetErrorHandler(xerrorstart);
+
     /* this causes an error if some other window manager is running */
     XSelectInput(dpy, DefaultRootWindow(dpy), SubstructureRedirectMask);
     XSync(dpy, False);
@@ -762,8 +778,7 @@ drawbar(Monitor *m) {
             dc.w = m->ww - x;
         }
         drawtext(stext, DrawStatus, dc.norm, False);
-    }
-    else
+    } else
         dc.x = m->ww;
 
     /* title */
@@ -1135,6 +1150,7 @@ killclient(const Arg *arg) {
 
     if (!selmon->sel)
         return;
+    
     if (isprotodel(selmon->sel)) {
         ev.type = ClientMessage;
         ev.xclient.window = selmon->sel->win;
@@ -1651,15 +1667,15 @@ void
 setnmaster(const Arg *arg) {
     Client *c;
     int new;
-    int clen;
+    int nc;
 
     if (arg->i == 0)
         return;
 
-    for (c = selmon->clients, clen = 0; c; c = c->next, clen++);
+    for (c = nexttiled(selmon->clients), nc = 0; c; c = nexttiled(c->next), nc++);
 
     new = selmon->nmasters[selmon->curtag] + arg->i;
-    if (new < 0 || new > clen)
+    if (new < 0 || new >= nc)
         return;
 
     selmon->nmasters[selmon->curtag] = new;

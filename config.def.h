@@ -1,11 +1,11 @@
 /* See LICENSE file for copyright and license details. */
 
 /* font */
-static const char font[]                = "Droid Sans Mono 10";
+static const char font[]                = "Terminus 12";
 
 /* border colors */
 static const char border_color[]        = "#333333";
-static const char sel_border_color[]    = "#FFFFFF";
+static const char sel_border_color[]    = "#FF0000";
 
 /* tag colors */
 static const char tag_bg_color[]        = "#131313";
