@@ -25,11 +25,15 @@ static const char title_fg_color[]      = "#FFFFFF";
 static const char status_bg_color[]     = "#131313";
 static const char status_fg_color[]     = "#98AAB2";
 
-/* misc appearance settings */
-static const unsigned int borderpx      = 1;        /* border pixel of windows */
-static const unsigned int snap          = 5;        /* snap pixel */
-static const Bool showbar               = True;     /* False = no bar */
-static const Bool topbar                = True;     /* True: top; False: bottom*/
+/* general settings */
+static const int nmaster                = 1;        /* Number of windows in master area */
+static const float mfact                = 0.7;      /* Master area size */
+static const int border_thickness       = 1;        /* Window border thickness */
+static const int snap                   = 5;        /* Window snap threshold */
+static const Bool focus_follows_mouse   = False;    /* Always focus window under cursor */
+static const Bool showbar               = True;     /* Bar visibility */
+static const Bool topbar                = True;     /* Invert bar position */
+static const Bool resizehints           = False;    /* Respect window size hints */
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -40,10 +44,6 @@ static const Rule rules[] = {
 };
 
 /* layout(s) */
-static const int nmaster          = 1;
-static const float mfact          = 0.7; /* factor of master area size [0.05..0.95] */
-static const Bool resizehints     = False; /* True means respect size hints in tiled resizals */
-
 static const Layout layouts[] = {
     { "Stack", stack },
     { "Tile", tile },
@@ -63,7 +63,7 @@ static const Layout layouts[] = {
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-static const char *dmenucmd[] = { "dmenu_run", "-b", "-fn", font, "-nb", tag_bg_color, "-nf", tag_fg_color, "-sb", sel_tag_bg_color, "-sf", sel_tag_fg_color, NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-b", "-fn", "-*-terminus-*-*-*-*-17-*-*-*-*-*-*-*", "-nb", tag_bg_color, "-nf", tag_fg_color, "-sb", sel_tag_bg_color, "-sf", sel_tag_fg_color, NULL };
 static const char *termcmd[]  = { "roxterm", NULL };
 
 static Key keys[] = {
@@ -72,6 +72,7 @@ static Key keys[] = {
     { MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 
     { MODKEY,                       XK_b,      togglebar,      {0} },
+    { MODKEY,                       XK_w,      toggleborders,  {0} },
 
     { MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
     { MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
@@ -94,9 +95,8 @@ static Key keys[] = {
     { MODKEY,                       XK_s,      setlayout,      {.v = &layouts[0]} },
     { MODKEY,                       XK_t,      setlayout,      {.v = &layouts[1]} },
     { MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
-    { MODKEY,                       XK_space,  setlayout,      {0} },
 
-    { MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
+    { MODKEY,                       XK_space,  togglefloating, {0} },
 
     { MODKEY,                       XK_0,      view,           {.ui = ~0 } },
     { MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
