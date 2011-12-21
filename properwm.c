@@ -488,7 +488,7 @@ buttonpress(XEvent *e) {
         do {
             x += TEXTW(tags[i]);
         } while (ev->x >= x && ++i < LENGTH(tags));
-        
+
         if (i < LENGTH(tags)) {
             click = ClickTagStrip;
             arg.ui = 1 << i;
@@ -1157,7 +1157,7 @@ killclient(const Arg *arg) {
 
     if (!selmon->sel)
         return;
-    
+
     if (isprotodel(selmon->sel)) {
         ev.type = ClientMessage;
         ev.xclient.window = selmon->sel->win;
